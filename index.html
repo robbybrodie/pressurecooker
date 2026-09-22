@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive Sydney family affordability and household pressure comparison across 1985, 1990, 2021 and 2026." />
+  <title>Sydney Family Pressure Explorer</title>
+  <style>
+    :root{
+      --bg:#f5f7fa;--panel:#ffffff;--panel2:#f8fafc;--text:#17202a;--muted:#667085;
+      --border:#d8dee8;--accent:#315efb;--accent-soft:#edf2ff;--danger:#b42318;
+      --s1:#315efb;--s2:#7a5af8;--s3:#0e9384;--s4:#dc6803;--s5:#d92d20;
+      --radius:16px;--shadow:0 1px 3px rgba(16,24,40,.08),0 1px 2px rgba(16,24,40,.05)
+    }
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.45}
+    button,input{font:inherit}.wrap{max-width:1180px;margin:0 auto;padding:28px 18px 50px}.top{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;margin-bottom:18px;flex-wrap:wrap}
+    h1{font-size:28px;line-height:1.15;margin:0 0 6px}.subtitle{color:var(--muted);font-size:14px;max-width:840px}.btn{border:1px solid var(--border);background:var(--panel);border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:650;box-shadow:var(--shadow)}
+    .panel,.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}.panel{padding:16px}.mb{margin-bottom:14px}.section-head{font-weight:750;font-size:16px}.hint{font-size:12px;color:var(--muted);margin-top:3px}
+    .income{padding:0;overflow:hidden}.income-head{padding:16px 16px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}.work-mode{min-width:330px}.mode-label{font-size:12px;color:var(--muted);margin-bottom:7px}.mode-row{display:flex;gap:8px;flex-wrap:wrap}.mode-btn{border:1px solid var(--border);background:var(--panel);border-radius:999px;padding:8px 12px;font-size:12px;cursor:pointer}.mode-btn.active{background:var(--accent-soft);border-color:var(--accent);font-weight:750}.mode-expl{margin:12px 16px 0;border:1px solid var(--border);border-radius:12px;padding:10px 12px;color:var(--muted);font-size:12px;background:var(--panel2)}
+    .people{display:grid;grid-template-columns:1fr 1fr;margin-top:10px}.person{padding:16px}.person+.person{border-left:1px solid var(--border)}.person-title{font-weight:700;margin-bottom:10px}.person-grid{display:grid;grid-template-columns:minmax(0,1fr) 132px;gap:16px;align-items:start}.rollup{border-left:1px solid var(--border);padding-left:12px;font-size:12px}.rrow+.rrow{margin-top:9px}.rlabel{color:var(--muted)}.rval{display:block;font-variant-numeric:tabular-nums;font-weight:750;margin-top:2px}
+    label.ctrl{display:block}.ctrl+.ctrl{margin-top:15px}.ctrl-top{display:flex;justify-content:space-between;gap:10px;font-size:13px}.ctrl-top strong{font-variant-numeric:tabular-nums}.range{width:100%;accent-color:var(--accent);margin-top:7px}.scale{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:3px}
+    .house-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:14px}.sub{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:13px}.sub-title{font-size:13px;font-weight:750}.big-number{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:5px}.loan-preview{text-align:right}.loan-preview .big-number{margin-top:2px}
+    .family-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.disabled{opacity:.42}.disabled input{cursor:not-allowed}.checkline{display:flex;align-items:center;gap:9px;margin-top:11px;font-size:13px}.checkline input{width:18px;height:18px;accent-color:var(--accent)}
+    .stress-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.care-summary{font-size:13px}.results{display:grid;grid-template-columns:1.25fr .85fr;gap:14px}.chart-card,.detail-card{padding:16px}.bar-row{padding:9px;border-radius:10px;cursor:pointer}.bar-row.selected{background:var(--panel2);outline:1px solid var(--border)}.bar-head{display:flex;justify-content:space-between;gap:12px;font-size:13px}.track{height:14px;background:#e9edf4;border-radius:999px;overflow:hidden;margin-top:7px}.fill{height:100%;border-radius:999px;transition:width .18s ease}.detail-title{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}.detail-era{font-size:21px;font-weight:800;margin-top:3px}.detail-sub,.detail-work{color:var(--muted);font-size:12px;margin-top:3px}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}.metric .k{font-size:11px;color:var(--muted)}.metric .v{font-size:14px;font-weight:750;font-variant-numeric:tabular-nums;margin-top:2px}.compare{border:1px solid var(--border);border-radius:12px;padding:11px;margin-top:16px;font-size:13px;background:var(--panel2)}
+    .audit{padding:16px;overflow:hidden}.scroll{overflow-x:auto}.table{border-collapse:collapse;width:100%;min-width:1450px;font-size:12px}.table th,.table td{padding:10px 9px;border-top:1px solid var(--border);text-align:right;white-space:nowrap}.table th{color:var(--muted);font-weight:650;border-top:0}.table th:first-child,.table td:first-child{text-align:left}.mono{font-variant-numeric:tabular-nums}
+    details{margin-top:14px;color:var(--muted);font-size:13px}summary{cursor:pointer;font-weight:700;color:var(--text);padding:10px 0}.note{margin-top:8px}.foot{font-size:11px;color:var(--muted);margin-top:20px}.warn{color:var(--danger)}
+    @media(max-width:900px){.house-grid{grid-template-columns:1fr 1fr}.results{grid-template-columns:1fr}.family-grid{grid-template-columns:1fr 1fr}.family-grid>:last-child{grid-column:1/-1}}
+    @media(max-width:700px){.people{grid-template-columns:1fr}.person+.person{border-left:0;border-top:1px solid var(--border)}.person-grid{grid-template-columns:1fr}.rollup{border-left:0;border-top:1px solid var(--border);padding-left:0;padding-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rrow+.rrow{margin-top:0}.house-grid,.family-grid,.stress-grid{grid-template-columns:1fr}.family-grid>:last-child{grid-column:auto}.work-mode{min-width:0}.loan-preview{text-align:left}.metrics{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+<main class="wrap" id="app">
+  <section class="top">
+    <div><h1>Sydney Family Pressure Explorer</h1><div class="subtitle">Build a 2026 Sydney household and compare the same economic position across 1985, the 1990 interest-rate peak, the 2021 COVID-19 interest-rate trough, 2026 and a configurable rate-stress case.</div></div>
+    <button class="btn" id="reset" type="button">Reset</button>
+  </section>
+
+  <section class="panel income mb">
+    <div class="income-head">
+      <div><div class="section-head">Household income</div><div class="hint">Each person is taxed separately. Person 2 can retain the same work effort or scale to the historical second-earner pattern.</div></div>
+      <div class="work-mode">
+        <div class="mode-label">Work pattern</div>
+        <div class="mode-row" role="group" aria-label="Work pattern">
+          <button id="modeSame" class="mode-btn active" type="button">Same effort</button>
+          <button id="modeHistorical" class="mode-btn" type="button">Historical second-earner</button>
+        </div>
+      </div>
+    </div>
+    <div id="modeExplanation" class="mode-expl">Same effort: the utilisation sliders are applied unchanged in every era.</div>
+    <div class="people">
+      <div class="person">
+        <div class="person-title">Person 1</div>
+        <div class="person-grid">
+          <div>
+            <label class="ctrl"><div class="ctrl-top"><span>FT salary</span><strong id="p1SalaryOut"></strong></div><input id="p1Salary" class="range" type="range" min="40000" max="600000" step="1000" value="110000"></label>
+            <label class="ctrl"><div class="ctrl-top"><span>Work utilisation</span><strong id="p1UtilOut"></strong></div><input id="p1Util" class="range" type="range" min="0" max="1" step="0.05" value="1"></label>
+          </div>
+          <div class="rollup">
+            <div class="rrow"><div class="rlabel">Gross</div><strong id="p1GrossRoll" class="rval"></strong></div>
+            <div class="rrow"><div class="rlabel">Tax + Medicare</div><strong id="p1TaxRoll" class="rval"></strong></div>
+            <div class="rrow"><div class="rlabel">Take-home / mo</div><strong id="p1NetRoll" class="rval"></strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="person">
+        <div class="person-title">Person 2</div>
+        <div class="person-grid">
+          <div>
+            <label class="ctrl"><div class="ctrl-top"><span>2026 FT salary</span><strong id="p2SalaryOut"></strong></div><input id="p2Salary" class="range" type="range" min="40000" max="600000" step="1000" value="95000"></label>
+            <label class="ctrl"><div class="ctrl-top"><span>2026 work utilisation</span><strong id="p2UtilOut"></strong></div><input id="p2Util" class="range" type="range" min="0" max="1" step="0.05" value="0.50"></label>
+          </div>
+          <div class="rollup">
+            <div class="rrow"><div class="rlabel">Gross</div><strong id="p2GrossRoll" class="rval"></strong></div>
+            <div class="rrow"><div class="rlabel">Tax + Medicare</div><strong id="p2TaxRoll" class="rval"></strong></div>
+            <div class="rrow"><div class="rlabel">Take-home / mo</div><strong id="p2NetRoll" class="rval"></strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel mb">
+    <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-end;flex-wrap:wrap">
+      <div><div class="section-head">Sydney house & mortgage</div><div class="hint">Choose the 2026 house price, deposit and loan structure together.</div></div>
+      <div class="loan-preview"><div class="hint">2026 loan amount</div><div id="loanPreview" class="big-number"></div></div>
+    </div>
+    <div class="house-grid">
+      <div class="sub"><div class="sub-title">House price</div><label class="ctrl"><div class="ctrl-top"><span>Purchase price</span><strong id="houseOut"></strong></div><input id="house" class="range" type="range" min="500000" max="4000000" step="10000" value="1730000"><div class="scale"><span>$500k</span><span>$4.0m</span></div></label></div>
+      <div class="sub"><div class="sub-title">Deposit</div><label class="ctrl"><div class="ctrl-top"><span>Deposit</span><strong id="depositOut"></strong></div><input id="deposit" class="range" type="range" min="0" max="100" step="1" value="20"><div class="scale"><span>0%</span><span>100% cash</span></div><div class="hint" style="margin-top:8px">Deposit amount: <strong id="depositDollar" class="mono" style="color:var(--text)"></strong></div></label></div>
+      <div class="sub"><div class="sub-title">Loan</div><div class="hint" style="margin-top:8px">Amount borrowed</div><div id="loanAmountBox" class="big-number"></div><div class="hint" style="margin-top:9px">House price × (1 − deposit)</div></div>
+      <div class="sub"><div class="sub-title">Mortgage term</div><label class="ctrl"><div class="ctrl-top"><span>Term</span><strong id="termOut"></strong></div><input id="term" class="range" type="range" min="20" max="35" step="5" value="30"><div class="hint">Principal & interest</div></label></div>
+    </div>
+  </section>
+
+  <section class="family-grid mb">
+    <div class="panel"><div class="section-head">Children</div><label class="ctrl"><div class="ctrl-top"><span>Total children</span><strong id="childrenOut"></strong></div><input id="children" class="range" type="range" min="0" max="5" step="1" value="2"></label><label class="ctrl"><div class="ctrl-top"><span>Children in childcare</span><strong id="careKidsOut"></strong></div><input id="careKids" class="range" type="range" min="0" max="2" step="1" value="2"><div class="hint">Cannot exceed total children</div></label></div>
+    <div class="panel"><div class="section-head">School fees</div><label class="checkline"><input id="schoolFeesEnabled" type="checkbox"><span>Include school fees</span></label><label id="schoolFeeWrap" class="ctrl disabled"><div class="ctrl-top"><span>2026 annual household fees</span><strong id="schoolFeeOut"></strong></div><input id="schoolFee" class="range" type="range" min="0" max="300000" step="1000" value="20000" disabled><div class="scale"><span>$0</span><span>$300k</span></div><div class="hint">Historical equivalents use the ABS Education CPI chain.</div></label></div>
+    <div id="childcareBox" class="panel"><div class="section-head">Childcare</div><label class="ctrl"><div class="ctrl-top"><span>2026 fee / 10h day</span><strong id="carePriceOut"></strong></div><input id="carePrice" class="range" type="range" min="100" max="220" step="5" value="160"></label><label class="ctrl"><div class="ctrl-top"><span>Work schedule overlap</span><strong id="overlapOut"></strong></div><input id="overlap" class="range" type="range" min="0.75" max="1.50" step="0.05" value="1"><div class="hint">1.00× = normal overlap. Lower means parents stagger work and need less care. Higher allows for more overlap, commute or wrap-around care.</div></label><div id="careBoxSummary" class="hint" style="margin-top:10px"></div></div>
+  </section>
+
+  <section class="stress-grid mb">
+    <div class="panel"><label class="ctrl"><div class="ctrl-top"><span>Stress rate increase</span><strong id="stressOut"></strong></div><input id="stress" class="range" type="range" min="0" max="200" step="25" value="75"></label></div>
+    <div class="panel care-summary"><div class="section-head" style="font-size:14px">Selected-era work & care</div><div id="careSummary" class="hint"></div></div>
+  </section>
+
+  <section class="results mb">
+    <div class="card chart-card"><div class="section-head">Household pressure through time</div><div class="hint" style="margin-bottom:12px">Mortgage P&I + net childcare + school fees / after-tax household resources</div><div id="bars"></div></div>
+    <div class="card detail-card" aria-live="polite"><div class="detail-title">Selected era</div><div id="selectedEra" class="detail-era"></div><div id="selectedSub" class="detail-sub"></div><div id="workScaleLine" class="detail-work"></div><div class="metrics">
+      <div class="metric"><div class="k">Person 2 utilisation</div><div id="p2EraUtil" class="v"></div></div>
+      <div class="metric"><div class="k">Care hrs / child</div><div id="careHours" class="v"></div></div>
+      <div class="metric"><div class="k">Loan amount</div><div id="loan" class="v"></div></div>
+      <div class="metric"><div class="k">P&I repayment</div><div id="mort" class="v"></div></div>
+      <div class="metric"><div class="k">Household gross</div><div id="gross" class="v"></div></div>
+      <div class="metric"><div class="k">After-tax resources</div><div id="take" class="v"></div></div>
+      <div class="metric"><div class="k">Net childcare</div><div id="care" class="v"></div></div>
+      <div class="metric"><div class="k">School fees</div><div id="school" class="v"></div></div>
+      <div class="metric"><div class="k">Total burden</div><div id="burden" class="v"></div></div>
+      <div class="metric"><div class="k">Left / week</div><div id="left" class="v"></div></div>
+    </div><div id="compare" class="compare"></div></div>
+  </section>
+
+  <section class="card audit mb"><div class="section-head">Audit table</div><div class="hint" style="margin-bottom:8px">In historical-work mode, Person 2 utilisation and childcare demand both change by era.</div><div class="scroll"><table class="table"><thead><tr><th>Era</th><th>P2 utilisation</th><th>Gross / yr</th><th>Take-home</th><th>House</th><th>Loan</th><th>Rate</th><th>P&I / mo</th><th>Care hrs</th><th>Childcare / wk</th><th>School / yr</th><th>Burden</th><th>Left / wk</th></tr></thead><tbody id="audit"></tbody></table></div></section>
+
+  <details><summary>Methodology and caveats</summary>
+    <div class="note"><strong>Work-pattern switch.</strong> Same effort applies both utilisation sliders unchanged across eras. Historical second-earner mode scales Person 2 utilisation by the model calibration: 1985 ×0.504, 1990 ×0.568, 2021 ×0.902, 2026 ×1.000. The resulting utilisation drives both Person 2 income and childcare hours.</div>
+    <div class="note"><strong>House.</strong> A selected 2026 Sydney house price is translated backwards using each era's median Sydney house-price ratio, preserving the household's relative position to the median.</div>
+    <div class="note"><strong>Mortgage.</strong> Fully amortising principal-and-interest payment. 0% deposit means full financing; 100% deposit means a cash purchase. LMI, stamp duty, conveyancing and transaction costs are not modelled.</div>
+    <div class="note"><strong>School fees.</strong> The 2026 amount is translated backwards using an ABS Education CPI-based scaler. The 1985 point uses a lower-confidence bridge because the older CPI grouped recreation and education.</div>
+    <div class="note"><strong>Childcare.</strong> Care demand is generated from overlapping paid work: 50 × max(0, Person 1 utilisation + effective Person 2 utilisation − 1), multiplied by the work-schedule-overlap factor and capped at 50 hours per child per week.</div>
+    <div class="note"><strong>Interpretation.</strong> This is a transparent normalised household-pressure model, not a forecast and not a claim that every Sydney household had these exact circumstances.</div>
+  </details>
+  <div class="foot">Static client-side calculator. No data is uploaded anywhere; all calculations run in your browser.</div>
+</main>
+<script>
+(()=>{
+  const root=document.getElementById('app');
+  const $=id=>root.querySelector('#'+id);
+  const money=n=>new Intl.NumberFormat('en-AU',{style:'currency',currency:'AUD',maximumFractionDigits:0}).format(Number.isFinite(n)?n:0);
+  const pct=n=>(Number.isFinite(n)?n:0).toFixed(1)+'%';
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const M26=1841*1.035,F26=1631*1.038,H26=1733891;
+  let workMode='same', selected='2026';
+  const eras=[
+    {id:'1985',label:'1985',m:357,f:287,h:88350,rate:13.5,tax:'1985',feeRatio:(55/50)/16,assist:1,edu:.111283,p2Scale:.503612},
+    {id:'1990',label:'1990 – Interest rate peak',m:500,f:420,h:194000,rate:17,tax:'1990',feeRatio:(117/50)/16,assist:36/(2*11*(117/50)),edu:.162808,p2Scale:.568208},
+    {id:'2021',label:'2021 – Interest rate COVID-19 trough',m:1540,f:1380,h:1601467,rate:2.96,tax:'2021',feeRatio:12/16,assist:null,edu:.776879,p2Scale:.902335},
+    {id:'2026',label:'2026 now',m:M26,f:F26,h:H26,rate:6.21,tax:'2026',feeRatio:1,assist:null,edu:1,p2Scale:1},
+    {id:'stress',label:'Stress',m:M26,f:F26,h:H26,rate:6.21,tax:'2027',feeRatio:1,assist:null,edu:1,p2Scale:1}
+  ];
+  function t85(x){if(x<=4594)return 0;if(x<=12499)return(x-4595)*.25;if(x<=19499)return 1976.26+(x-12500)*.30;if(x<=27999)return 4076.25+(x-19500)*.46;if(x<=34999)return 7986.25+(x-28000)*.48;return 11346.25+(x-35000)*.60}
+  function t90(x){if(x<=5250)return 0;if(x<=17650)return(x-5250)*.205;if(x<=20600)return 2542+(x-17650)*.245;if(x<=20700)return 3264.75+(x-20600)*.295;if(x<=35000)return 3294.25+(x-20700)*.385;if(x<=36000)return 8799.75+(x-35000)*.425;if(x<=50000)return 9224.75+(x-36000)*.465;return 15734.75+(x-50000)*.47}
+  function lito(x){if(x<=37500)return 700;if(x<=45000)return Math.max(0,700-.05*(x-37500));if(x<=66667)return Math.max(0,325-.015*(x-45000));return 0}
+  function lmito(x){if(x<=37000)return 675;if(x<=48000)return Math.min(1500,675+.075*(x-37000));if(x<=90000)return 1500;if(x<126000)return Math.max(0,1500-.03*(x-90000));return 0}
+  function t21(x){let t;if(x<=18200)t=0;else if(x<=45000)t=(x-18200)*.19;else if(x<=120000)t=5092+(x-45000)*.325;else if(x<=180000)t=29467+(x-120000)*.37;else t=51667+(x-180000)*.45;return Math.max(0,t-lito(x)-lmito(x))}
+  function tm(x,r){let t;if(x<=18200)t=0;else if(x<=45000)t=(x-18200)*r;else if(x<=135000)t=(45000-18200)*r+(x-45000)*.30;else if(x<=190000)t=(45000-18200)*r+(135000-45000)*.30+(x-135000)*.37;else t=(45000-18200)*r+(135000-45000)*.30+(190000-135000)*.37+(x-190000)*.45;return Math.max(0,t-lito(x))}
+  function indiv2026(g){const tax=tm(g,.15)+g*.02;return{gross:g,tax,net:g-tax}}
+  function netIncome(a,b,t){const g=a+b;let tx=0,m=0;if(t==='1985'){tx=t85(a)+t85(b);m=(a>7526?a*.01:0)+(b>7526?b*.01:0)}else if(t==='1990'){tx=t90(a)+t90(b);m=(a>11745?a*.0125:0)+(b>11745?b*.0125:0)}else if(t==='2021'){tx=t21(a)+t21(b);m=g*.02}else if(t==='2026'){tx=tm(a,.15)+tm(b,.15);m=g*.02}else{tx=tm(a,.14)+tm(b,.14);m=g*.02}return g-tx-m}
+  function mortgage(p,rate,y){if(p<=0)return{pay:0};const r=rate/1200,n=y*12;return{pay:p*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1)}}
+  function benefits(e,kids){if(kids<=0)return 0;const scale=kids/2;if(e.tax==='1985')return 55.35*12*scale;if(e.tax==='1990')return 37.2*26*scale;return 0}
+  function careNet(e,g,hours,kids,dayPrice){if(kids<=0||hours<=0)return 0;const fee=dayPrice/10*e.feeRatio,G=kids*hours*fee;if(e.tax==='1985'||e.tax==='1990')return G*e.assist;if(e.tax==='2021'){const c=clamp(85-Math.max(0,g-70015)/3000,0,85);return Math.max(0,G-kids*hours*Math.min(fee,12.31)*c/100)}const st=clamp(90-Math.max(0,g-88520)/5000,0,90);let hi=g<=146437?95:g<191437?95-(g-146437)/3000:g<270727?80:g<360727?80-(g-270727)/3000:g<370727?50:st;let sub=hours*Math.min(fee,15.19)*st/100;if(kids>1)sub+=(kids-1)*hours*Math.min(fee,15.19)*hi/100;return Math.max(0,G-sub)}
+  function state(){return{p1:+$('p1Salary').value,u1:+$('p1Util').value,p2:+$('p2Salary').value,u2:+$('p2Util').value,house:+$('house').value,dep:+$('deposit').value/100,term:+$('term').value,children:+$('children').value,careKids:+$('careKids').value,schoolFeesEnabled:$('schoolFeesEnabled').checked,schoolFee:+$('schoolFee').value,care:+$('carePrice').value,over:+$('overlap').value,stress:+$('stress').value}}
+  function effectiveU2(e,s){return workMode==='historical'?clamp(s.u2*e.p2Scale,0,1):s.u2}
+  function calc(e,s){const u2=effectiveU2(e,s),a=s.p1*(e.m/M26)*s.u1,b=s.p2*(e.f/F26)*u2,g=a+b,resources=netIncome(a,b,e.tax)+benefits(e,s.children),house=s.house*(e.h/H26),loan=Math.max(0,house*(1-s.dep)),rate=e.id==='stress'?e.rate+s.stress/100:e.rate,mp=mortgage(loan,rate,s.term),hrs=s.careKids>0?Math.min(50,50*Math.max(0,s.u1+u2-1)*s.over):0,cc=careNet(e,g,hrs,s.careKids,s.care),school=s.schoolFeesEnabled&&s.children>0?s.schoolFee*e.edu:0,bur=resources>0?(mp.pay*12+cc*52+school)/resources*100:0,left=(resources-mp.pay*12-cc*52-school)/52;return{id:e.id,label:e.id==='stress'?`Stress (+${s.stress}bp)`:e.label,u2,g,resources,house,loan,rate,pay:mp.pay,hrs,cc,school,bur,left}}
+  function syncChildren(){const total=+$('children').value;if(+$('careKids').value>total)$('careKids').value=total;$('careKids').max=total}
+  function render(){
+    syncChildren();
+    const s=state(),p1=indiv2026(s.p1*s.u1),p2=indiv2026(s.p2*s.u2),loanPreview=Math.max(0,s.house*(1-s.dep)),careEnabled=s.careKids>0;
+    $('modeSame').classList.toggle('active',workMode==='same');$('modeHistorical').classList.toggle('active',workMode==='historical');
+    $('modeExplanation').textContent=workMode==='same'?'Same effort: both utilisation sliders are applied unchanged in every era.':'Historical second-earner: Person 2 utilisation is scaled down in earlier eras. The scaled utilisation drives both Person 2 income and childcare demand.';
+    $('p1SalaryOut').textContent=money(s.p1);$('p2SalaryOut').textContent=money(s.p2);$('p1UtilOut').textContent=(s.u1*100).toFixed(0)+'%';$('p2UtilOut').textContent=(s.u2*100).toFixed(0)+'%';
+    $('p1GrossRoll').textContent=money(p1.gross)+'/yr';$('p1TaxRoll').textContent=money(p1.tax)+'/yr';$('p1NetRoll').textContent=money(p1.net/12);$('p2GrossRoll').textContent=money(p2.gross)+'/yr';$('p2TaxRoll').textContent=money(p2.tax)+'/yr';$('p2NetRoll').textContent=money(p2.net/12);
+    $('houseOut').textContent=money(s.house);$('depositOut').textContent=(s.dep*100).toFixed(0)+'%';$('depositDollar').textContent=money(s.house*s.dep);$('loanPreview').textContent=money(loanPreview);$('loanAmountBox').textContent=money(loanPreview);$('termOut').textContent=s.term+'y';
+    $('childrenOut').textContent=s.children;$('careKidsOut').textContent=s.careKids;$('carePriceOut').textContent=money(s.care);$('overlapOut').textContent=s.over.toFixed(2)+'×';$('stressOut').textContent='+'+s.stress+'bp';$('schoolFeeOut').textContent=money(s.schoolFee)+'/yr';
+    $('schoolFee').disabled=!s.schoolFeesEnabled;$('schoolFeeWrap').classList.toggle('disabled',!s.schoolFeesEnabled);$('carePrice').disabled=!careEnabled;$('overlap').disabled=!careEnabled;$('childcareBox').classList.toggle('disabled',!careEnabled);
+    const rs=eras.map(e=>calc(e,s)),mx=Math.max(110,...rs.map(x=>x.bur));
+    const colours=['var(--s1)','var(--s2)','var(--s3)','var(--s4)','var(--s5)'];
+    $('bars').innerHTML=rs.map((x,i)=>`<button type="button" class="bar-row ${selected===x.id?'selected':''}" data-e="${x.id}" style="width:100%;border:0;background:${selected===x.id?'var(--panel2)':'transparent'}"><div class="bar-head"><span>${x.label}</span><strong>${pct(x.bur)}</strong></div><div class="track"><div class="fill" style="width:${Math.min(100,x.bur/mx*100)}%;background:${colours[i]}"></div></div></button>`).join('');
+    root.querySelectorAll('[data-e]').forEach(b=>b.addEventListener('click',()=>{selected=b.dataset.e;render()}));
+    const d=rs.find(x=>x.id===selected)||rs[3];
+    $('selectedEra').textContent=d.label;$('selectedSub').textContent=`${money(d.house)} house · ${d.rate.toFixed(2)}% · ${(s.dep*100).toFixed(0)}% deposit`;
+    $('workScaleLine').textContent=workMode==='historical'?`Historical second-earner scaling active · 2026 selection ${(s.u2*100).toFixed(0)}% → ${(d.u2*100).toFixed(1)}% in this era`:'';
+    $('p2EraUtil').textContent=(d.u2*100).toFixed(1)+'%';$('careHours').textContent=careEnabled?d.hrs.toFixed(1)+' h/wk':'Off';$('loan').textContent=money(d.loan);$('mort').textContent=money(d.pay)+'/mo';$('gross').textContent=money(d.g);$('take').textContent=money(d.resources);$('care').textContent=careEnabled?money(d.cc)+'/wk':'Off';$('school').textContent=s.schoolFeesEnabled?money(d.school)+'/yr':'Off';$('burden').textContent=pct(d.bur);$('left').textContent=money(d.left)+'/wk';
+    $('careBoxSummary').textContent=careEnabled?`For 2026: ${rs[3].hrs.toFixed(1)} hours per child/week. In historical mode this changes by era as Person 2 work changes.`:'No children in childcare — childcare costs are excluded.';
+    $('careSummary').textContent=careEnabled?`${d.label}: Person 2 ${(d.u2*100).toFixed(1)}% utilisation → ${d.hrs.toFixed(1)} care hours per child/week.`:'Childcare disabled';
+    const old=rs.find(x=>x.id==='1990'),now=rs.find(x=>x.id==='2026'),diff=now.bur-old.bur;
+    $('compare').innerHTML=`<div class="hint">2026 versus 1990 – Interest rate peak</div><div style="margin-top:4px"><strong>${Math.abs(diff).toFixed(1)} percentage points ${diff>=0?'higher':'lower'}</strong> burden for this household.</div><div class="hint" style="margin-top:4px">1990 P2 utilisation ${(old.u2*100).toFixed(1)}% · 2026 ${(now.u2*100).toFixed(1)}%</div>`;
+    $('audit').innerHTML=rs.map(x=>`<tr><td>${x.label}</td><td class="mono">${(x.u2*100).toFixed(1)}%</td><td class="mono">${money(x.g)}</td><td class="mono">${money(x.resources)}</td><td class="mono">${money(x.house)}</td><td class="mono">${money(x.loan)}</td><td class="mono">${x.rate.toFixed(2)}%</td><td class="mono">${money(x.pay)}</td><td class="mono">${x.hrs.toFixed(1)}</td><td class="mono">${money(x.cc)}</td><td class="mono">${money(x.school)}</td><td class="mono"><strong>${pct(x.bur)}</strong></td><td class="mono">${money(x.left)}</td></tr>`).join('');
+  }
+  $('modeSame').addEventListener('click',()=>{workMode='same';render()});$('modeHistorical').addEventListener('click',()=>{workMode='historical';render()});
+  ['p1Salary','p1Util','p2Salary','p2Util','house','deposit','term','children','careKids','carePrice','overlap','stress','schoolFeesEnabled','schoolFee'].forEach(id=>$(id).addEventListener('input',render));
+  $('reset').addEventListener('click',()=>{workMode='same';selected='2026';$('p1Salary').value=110000;$('p1Util').value=1;$('p2Salary').value=95000;$('p2Util').value=.5;$('house').value=1730000;$('deposit').value=20;$('term').value=30;$('children').value=2;$('careKids').value=2;$('schoolFeesEnabled').checked=false;$('schoolFee').value=20000;$('carePrice').value=160;$('overlap').value=1;$('stress').value=75;render()});
+  render();
+})();
+</script>
+</body>
+</html>

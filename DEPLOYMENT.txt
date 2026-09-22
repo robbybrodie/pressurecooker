@@ -1,0 +1,5 @@
+GitHub Pages deployment
+
+Upload index.html and README.md to the root of your GitHub repository.
+The .nojekyll file is hidden on macOS; it is optional for this site but included.
+Then enable Settings > Pages > Deploy from a branch > main > /(root).
