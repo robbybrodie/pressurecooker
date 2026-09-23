@@ -34,3 +34,12 @@ This is a normalised household-pressure model, not a forecast and not a claim th
 
 - `index.html` — complete application; no dependencies.
 - `.nojekyll` — prevents GitHub Pages from applying Jekyll processing.
+
+## Other essential spending
+The calculator now includes an **Other essential spending** panel. You can either enter one 2026 monthly total or enable **Adjust individually** for groceries, electricity, gas, petrol, cars (excluding fuel), public transport, council rates and water.
+
+The entered 2026 basket is translated into each comparison era using category-level ABS CPI proxy scalers. These long-run category scalers are intentionally marked as lower-confidence than the mortgage and tax inputs because CPI expenditure-class definitions and reference bases have changed over the 1985–2026 period. They are designed for sensitivity modelling rather than as exact reconstructed household bills.
+
+## Default 2026 essentials basket
+
+The starting basket is $3,410/month: groceries $1,500; electricity $250; gas $100; petrol $450; cars excluding fuel $700; public transport $150; council rates $160 (~$1,920/year); and water $100 (~$300/quarter). These are editable modelling defaults, not claims about every Sydney household.
